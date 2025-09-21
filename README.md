@@ -1,8 +1,7 @@
 # Beta
-you have been warned.
+you have been warned and also there is no warranty for this script.
 
 This script uses cjxl, fd, and zenity. Make sure they are both installed on your system.
-
 
 # TO-DO
 ## bugs
