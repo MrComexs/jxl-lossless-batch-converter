@@ -1,15 +1,10 @@
 #!/bin/bash
-if [ ! -x "$(command -v cjxl)" ]; then
-    zenity --error --text="Error: cjxl not found. Please install it first."
+for cmd in zenity cjxl fd echo sed mkdir; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    [[ $cmd == "zenity" ]] || zenity --error --text="Error: $cmd not found. Please install it first."
     exit 1
-fi
-
-#kdialog --getexistingdirectory
-
-if [ ! -x "$(command -v cjxl)" ]; then
-    zenity --error --text="Error: cjxl not found. Please install it first."
-    exit 1
-fi
+  fi
+done
 
 selected_dir=$(zenity --file-selection --directory)
 
@@ -42,6 +37,7 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
     fi
 
     mkdir -p "$output_dir/$sub_output_dir"    
-    cjxl "$file" -e 1 -d 0 "$output_dir/$sub_output_dir/${base_name}.jxl"
+    # What if two different types of files with the same name in the same sub dir 
+    cjxl "$file" -e 1 -d 0 "$output_dir/$sub_output_dir/${no_extension}.jxl"
     echo
 done
