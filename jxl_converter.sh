@@ -19,6 +19,14 @@ elif [ "$selected_dir" = "$HOME" ]; then
 fi
 clear
 
+effort=$(zenity --entry --text "What effort would you like? \n \n The Higher the number the more effort cjxl spends \n \n 7 is the default for cjxl" --entry-text "1-10" --title "Enter Effort")
+
+if [[ $effort =~ ^[1-9]$|^10$ ]]; then
+    zenity --info --text="You entered: $effort"
+else
+    zenity --error --text="Invalid input. Please enter a number between 1 and 10."
+fi
+
 cd "$selected_dir"||exit 1
 
 output_dir="${selected_dir}/converted_jxl"
@@ -43,9 +51,9 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
     # what if user ran the script again both $output_jxl and water-cats.jpg.jxl exist it would overwrite water-cats each time
     # either check if $output_dir exist than exit or fix below
     if [ -f "$output_jxl" ]; then
-        cjxl "$file" -e 1 -d 0 "$output_dir/$sub_output_dir/${base_name}.jxl"
+        cjxl "$file" -e "$effort" -d 0 "$output_dir/$sub_output_dir/${base_name}.jxl"
     else
-        cjxl "$file" -e 1 -d 0 "$output_jxl"
+        cjxl "$file" -e "$effort" -d 0 "$output_jxl"
     fi
     echo
     # add zenity prompt to ask user if they want to remove orginal file
