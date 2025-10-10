@@ -25,6 +25,14 @@ if [[ $effort =~ ^[1-9]$|^10$ ]]; then
     zenity --info --text="You entered: $effort"
 else
     zenity --error --text="Invalid input. Please enter a number between 1 and 10."
+    exit 1
+fi
+
+if zenity --question --text "Is this the Corrent effort and path? \n \n Effort: $effort \n $selected_dir" --title "Confirmation"; then
+    echo
+else
+    zenity --info --text "script terminated"
+    exit 1
 fi
 
 cd "$selected_dir"||exit 1
