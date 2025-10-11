@@ -8,7 +8,6 @@ This script uses cjxl, fd, and zenity. Make sure they are both installed on your
 - keep folder structure
 - asks user for effort and input folder using zenity
 - some duplication protection
-- 
 # TO-DO
 - speed it up
 ## bugs
