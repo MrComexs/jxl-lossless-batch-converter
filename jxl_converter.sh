@@ -48,10 +48,12 @@ temp_dir=$(mktemp -d)
 
 fd -e jpg -e jpeg -e png | while IFS= read -r file; do
 
+    input_size=$(stat -c "%s" "$file")
+
     file_type=$(identify -format "%m" "$file")
 
     if [ "$file_type" == JPEG ]; then
-        jpeg_cjxl_arg="-j 0"
+        jpeg_cjxl_arg="-j 1"
         echo "$file is a JPEG"
     elif [ "$file_type" == PNG ]; then
         echo "$file is a PNG"
@@ -76,6 +78,7 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
 
     temp_output_jxl="$temp_dir/${no_extension}.jxl"
     output_jxl="$output_dir/$sub_output_dir/${no_extension}.jxl"
+    output_ext_jxl="$output_dir/$sub_output_dir/${base_name}.jxl"
     # either check if $output_dir exist than exit or fix below
 
     cjxl "$file" -e "$effort" -d 0 $jpeg_cjxl_arg --quiet "$temp_output_jxl"
@@ -88,7 +91,7 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
                 djxl_output_value=$(identify -format "%#\n" "$temp_dir/${no_extension}.jpg")
                 rm "$temp_dir/${no_extension}.jpg"
             fi
-   fi
+    fi
 
     input_value=$(identify -format "%#\n" "$file")
     temp_output_value=$(identify -format "%#\n" "$temp_output_jxl")
@@ -96,6 +99,10 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
      
     if [ ! -f "$output_jxl" ]; then
         mv "$temp_output_jxl" "$output_jxl"
+        output_size=$(stat -c "%s" "$output_jxl")
+        if [[ $output_size -gt $input_size ]]; then
+            rm "$output_jxl"  # Delete output file if it's larger
+        fi
     elif [ "$input_value" == "$old_output_value" ]; then
         rm "$temp_output_jxl"
         echo "$file old jxl match, not writing"
@@ -108,13 +115,18 @@ fd -e jpg -e jpeg -e png | while IFS= read -r file; do
         rm "$temp_output_jxl"
         echo "$file djxl value matched"
         :
-    elif [ ! -f "$output_dir/$sub_output_dir/${base_name}.jxl" ];then
-        mv "$temp_output_jxl" "$output_dir/$sub_output_dir/${base_name}.jxl"
+    elif [ ! -f "$output_ext_jxl" ];then
+        mv "$temp_output_jxl" "$output_ext_jxl"
+        output_size=$(stat -c "%s" "$temp_output_jxl" "$output_ext_jxl")
+        if [[ $output_size -gt $input_size ]]; then
+            rm "$output_ext_jxl"  # Delete output file if it's larger
+        fi
     else
         zenity --error --text="$file couldn't be written \n  \n${no_extension}.jxl and ${file}.jxl already exist"
         rm "$temp_output_jxl"
     fi
-    echo
+echo
+
 done
 
 rmdir "$temp_dir"
