@@ -14,6 +14,7 @@ This script uses libjxl, fd, imagemagick and zenity. Make sure they are both ins
 ## bugs
 - none that I know of
 ## Features
+- asked user if they want to import images that were smaller then the output of cjxl
 - webp support
 - kdialog support
 - deletes orignal image
