@@ -17,7 +17,7 @@ This script uses libjxl, fd, imagemagick and zenity. Make sure they are both ins
 - asked user if they want to import images that were smaller then the output of cjxl
 - webp support
 - kdialog support
-- deletes orignal image
+- deletes the orignal image
   - if use accepts in zenity menu 
 - compares image sum value to make sure that input and jxl_output are lossless
   - jpeg uses djxl to compares md5 sum of orginal jpg and out of djxl ¹
